@@ -9,6 +9,7 @@ import {
   writePosts,
 } from "../lib/fs-tools.js";
 import { getPDFReadableStream } from "../lib/pdf-tools.js";
+import { sendPostEmail } from "../lib/email-tools.js";
 
 const postsRouter = express.Router();
 
@@ -77,6 +78,16 @@ postsRouter.get("/pdf/:postid", async (req, res, next) => {
     pipeline(source, destination, (err) => {
       if (err) console.log(err);
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+postsRouter.post("/email", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    await sendPostEmail(email);
+    res.send();
   } catch (err) {
     next(err);
   }
